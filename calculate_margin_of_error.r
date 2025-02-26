@@ -12,8 +12,5 @@ critical_value <- qnorm(1 - (1 - confidence_level) / 2)
 # Calculate margin of error
 margin_of_error <- critical_value * (sigma / sqrt(n))
 
-# Round to three decimal places
-margin_of_error <- round(margin_of_error, 3)
-
 # Print the result
 print(margin_of_error)
