@@ -1,10 +1,11 @@
+
 # Function to calculate point estimate
 point_estimate <- function(sample_mean) {
   return(sample_mean)
 }
 
 # General function to calculate the margin of error for any confidence interval
-calculate_margin_of_error <- function(n, sigma_squared, confidence_level = 0.95) {
+calculate_margin_of_error <- function(n, sigma_squared, confidence_level = 0.95) { 
   if (n <= 0 || sigma_squared <= 0 || confidence_level <= 0 || confidence_level >= 1) {
     stop("Invalid input values. Ensure n > 0, sigma_squared > 0, and 0 < confidence_level < 1.")
   }
@@ -130,4 +131,17 @@ calculate_t_critical_value_With_only_confidenceLevel_and_n <- function(confidenc
   
   # Return the t-critical value rounded to two decimal places
   return(t_critical_value)
+}
+
+
+
+#p-test test statistic
+make_test_statistic <- function(meanX, h0, s, number_of_samplesS){
+  return(((mean - h0)/(s/sqrt(number_of_samplesS)))) # nolint
+}
+
+make_p_value_to_the_left <- function(t_score, degrees_of_freedom, lower_tail) {
+  # Calculate p-value using t-distribution
+  result <- pt(q = t_score, df = degrees_of_freedom, lower.tail = lower_tail)
+  return(result)
 }
