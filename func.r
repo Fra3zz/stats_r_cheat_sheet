@@ -140,7 +140,7 @@ make_test_statistic <- function(meanX, h0, s, number_of_samplesS){
   return(((mean - h0)/(s/sqrt(number_of_samplesS)))) # nolint
 }
 
-make_p_value_to_the_left <- function(t_score, degrees_of_freedom, lower_tail) {
+make_p_value <- function(t_score, degrees_of_freedom, lower_tail) {
   # Calculate p-value using t-distribution
   result <- pt(q = t_score, df = degrees_of_freedom, lower.tail = lower_tail)
   return(result)
