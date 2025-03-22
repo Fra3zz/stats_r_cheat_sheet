@@ -135,13 +135,56 @@ calculate_t_critical_value_With_only_confidenceLevel_and_n <- function(confidenc
 
 
 
-#p-test test statistic
-make_test_statistic <- function(meanX, h0, s, number_of_samplesS){
-  return(((mean - h0)/(s/sqrt(number_of_samplesS)))) # nolint
+# Function to calculate the t-test statistic
+calculate_t_statistic <- function(sample_mean, hypothesized_mean, standard_deviation, sample_size) {
+  # Calculate the t-statistic using the formula: (sample_mean - hypothesized_mean) / (standard_deviation / sqrt(sample_size))
+  return(((sample_mean - hypothesized_mean) / (standard_deviation / sqrt(sample_size))))
 }
 
-make_p_value <- function(t_score, degrees_of_freedom, lower_tail) {
+# Function to calculate the p-value for a t-test
+calculate_p_value <- function(t_score, degrees_of_freedom, is_lower_tail) {
   # Calculate p-value using t-distribution
-  result <- pt(q = t_score, df = degrees_of_freedom, lower.tail = lower_tail)
+  result <- pt(q = t_score, df = degrees_of_freedom, lower.tail = is_lower_tail)
   return(result)
+}
+
+
+# Function to perform a one-sample t-test
+one_sample_t_test <- function(sample_mean, population_mean, sample_std_dev, sample_size, alpha = 0.05) {
+  # Calculate the t-statistic
+  t_statistic = (sample_mean - population_mean) / (sample_std_dev / sqrt(sample_size))
+  
+  # Calculate the degrees of freedom
+  df = sample_size - 1
+  
+  # Calculate the p-value
+  p_value = 2 * pt(-abs(t_statistic), df, lower.tail = FALSE)
+  
+  # Determine the rejection region
+  if (t_statistic > 0) {
+    # One-tailed test with t > t-critical
+    t_upper = round(qt(1 - alpha/2, df), 3)
+    t_lower = "NONE"
+  } else if (t_statistic < 0) {
+    # One-tailed test with t < t-critical
+    t_upper = "NONE"
+    t_lower = round(-qt(1 - alpha/2, df), 3)
+  } else {
+    # Two-tailed test with t between -t-critical and t-critical
+    t_upper = round(qt(1 - alpha/2, df), 3)
+    t_lower = round(-qt(1 - alpha/2, df), 3)
+  }
+  
+  # Print the results
+  print(paste("t-statistic:", t_statistic))
+  print(paste("p-value:", p_value))
+  print(paste("Reject the null hypothesis if p-value <", alpha))
+  print(paste("Rejection region: t <", t_lower, "or t >", t_upper))
+  
+  # Check if the p-value is less than alpha
+  if (p_value < alpha) {
+    print("Reject the null hypothesis. The sample mean is different from the population mean.")
+  } else {
+    print("Fail to reject the null hypothesis. The sample mean is not different from the population mean.")
+  }
 }
