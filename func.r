@@ -193,3 +193,128 @@ calculate_t_from_population_mean_differance <- function(population_mean_differen
   result = population_mean_difference/(standard_deviation/sqrt(sample_size_n))
   return(result)
 }
+
+calculate_f_statistic <- function(sd1, n1, sd2, n2) {
+  # Calculate the F-statistic
+  f_statistic <- (sd1^2) / (sd2^2)
+  
+  # Return the F-statistic and degrees of freedom
+  return(f_statistic)
+}
+calculate_p_value_from_f <- function(f_statistic, df1, df2, alternative = "two.sided") {
+  # Calculate the p-value based on the alternative hypothesis
+  if (alternative == "two.sided") {
+    # Two-tailed test
+    p_value <- 2 * min(pf(f_statistic, df1, df2), 1 - pf(f_statistic, df1, df2))
+  } else if (alternative == "greater") {
+    # One-tailed test (greater)
+    p_value <- 1 - pf(f_statistic, df1, df2)
+  } else if (alternative == "less") {
+    # One-tailed test (less)
+    p_value <- pf(f_statistic, df1, df2)
+  } else {
+    stop("Invalid alternative hypothesis. Choose 'two.sided', 'greater', or 'less'.")
+  }
+  
+  # Return the p-value rounded to four decimal places
+  return(p_value)
+}
+
+calculate_t_test_two_data_sets <- function(mean1, sd1, n1, mean2, sd2, n2, alternative = "two.sided") {
+  # Calculate the pooled standard deviation
+  pooled_sd <- sqrt(((n1 - 1) * sd1^2 + (n2 - 1) * sd2^2) / (n1 + n2 - 2))
+  
+  # Calculate the standard error
+  se <- pooled_sd * sqrt(1/n1 + 1/n2)
+  
+  # Calculate the t-statistic
+  t_statistic <- (mean1 - mean2) / se
+  
+  # Calculate degrees of freedom
+  df <- n1 + n2 - 2
+  
+  # Calculate the p-value based on the alternative hypothesis
+  if (alternative == "two.sided") {
+    p_value <- 2 * pt(-abs(t_statistic), df)
+  } else if (alternative == "greater") {
+    p_value <- pt(-t_statistic, df)
+  } else if (alternative == "less") {
+    p_value <- pt(t_statistic, df)
+  } else {
+    stop("Invalid alternative hypothesis. Choose 'two.sided', 'greater', or 'less'.")
+  }
+  
+  # Return the t-statistic and p-value rounded to two and four decimal places, respectively
+  return(t_statistic)
+}
+
+calculate_t_statistic_two_sample <- function(mean1, sd1, n1, mean2, sd2, n2) {
+  # Calculate the pooled standard deviation
+  pooled_sd <- sqrt(((n1 - 1) * (sd1^2) + (n2 - 1) * (sd2^2)) / (n1 + n2 - 2))
+  
+  # Calculate the standard error
+  se <- pooled_sd * sqrt((1/n1) + (1/n2))
+  
+  # Calculate the t-statistic
+  t_statistic <- (mean1 - mean2) / se
+  
+  # Return the t-statistic rounded to two decimal places
+  return(t_statistic)
+}
+
+determine_rejection_region <- function(test_statistic, df1, df2 = NULL, alpha = 0.05, test_type = "t", alternative = "two.sided") {
+  # Determine the critical values based on the test type and alternative hypothesis
+  if (test_type == "t") {
+    if (alternative == "two.sided") {
+      critical_value_low <- qt(alpha / 2, df1)
+      critical_value_high <- qt(1 - alpha / 2, df1)
+    } else if (alternative == "greater") {
+      critical_value_low <- qt(1 - alpha, df1)
+      critical_value_high <- "NONE"
+    } else if (alternative == "less") {
+      critical_value_low <- "NONE"
+      critical_value_high <- qt(alpha, df1)
+    } else {
+      stop("Invalid alternative hypothesis. Choose 'two.sided', 'greater', or 'less'.")
+    }
+  } else if (test_type == "f") {
+    if (alternative == "two.sided") {
+      critical_value_low <- qf(alpha / 2, df1, df2)
+      critical_value_high <- qf(1 - alpha / 2, df1, df2)
+    } else if (alternative == "greater") {
+      critical_value_low <- qf(1 - alpha, df1, df2)
+      critical_value_high <- "NONE"
+    } else if (alternative == "less") {
+      critical_value_low <- "NONE"
+      critical_value_high <- qf(alpha, df1, df2)
+    } else {
+      stop("Invalid alternative hypothesis. Choose 'two.sided', 'greater', or 'less'.")
+    }
+  } else {
+    stop("Invalid test type. Choose 't' or 'f'.")
+  }
+  
+  # Print the rejection region
+  cat("Rejection region:\n")
+  cat("test statistic <", ifelse(critical_value_low == "NONE", "NONE", round(critical_value_low, 6)), "\n")
+  cat("test statistic >", ifelse(critical_value_high == "NONE", "NONE", round(critical_value_high, 6)), "\n")
+}
+
+calculate_p_value_t_test_for_two_data_sets <- function(t_statistic, n1, n2, alternative = "two.sided") {
+  # Calculate degrees of freedom for equal variances
+  df <- n1 + n2 - 2
+  
+  # Calculate the p-value based on the alternative hypothesis
+  if (alternative == "two.sided") {
+    p_value <- 2 * pt(-abs(t_statistic), df)
+  } else if (alternative == "greater") {
+    p_value <- pt(-t_statistic, df)
+  } else if (alternative == "less") {
+    p_value <- pt(t_statistic, df)
+  } else {
+    stop("Invalid alternative hypothesis. Choose 'two.sided', 'greater', or 'less'.")
+  }
+  
+  # Return the p-value rounded to four decimal places
+  return(p_value)
+}
