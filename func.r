@@ -188,3 +188,8 @@ one_sample_t_test <- function(sample_mean, population_mean, sample_std_dev, samp
     print("Fail to reject the null hypothesis. The sample mean is not different from the population mean.")
   }
 }
+
+calculate_t_from_population_mean_differance <- function(population_mean_difference, standard_deviation, sample_size_n){
+  result = population_mean_difference/(standard_deviation/sqrt(sample_size_n))
+  return(result)
+}
