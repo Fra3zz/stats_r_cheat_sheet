@@ -318,3 +318,11 @@ calculate_p_value_t_test_for_two_data_sets <- function(t_statistic, n1, n2, alte
   # Return the p-value rounded to four decimal places
   return(p_value)
 }
+
+calculate_sample_variance <- function(x) {
+  n <- length(x)
+  mean_x <- mean(x)
+  sum_squares <- sum((x - mean_x)^2)
+  Si <- (1 / (n - 1)) * sum_squares
+  return(Si)
+}
